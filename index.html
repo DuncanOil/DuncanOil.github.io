@@ -15,7 +15,6 @@
 <link rel="modulepreload" href="./_observablehq/runtime.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.js">
 <link rel="modulepreload" href="./_npm/mapbox-gl@3.2.0/_esm.js">
-<link rel="modulepreload" href="./_npm/exceljs@4.4.0/_esm.js">
 <link rel="modulepreload" href="./_import/components/duncanLandParser.8960d0ef.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/zip.js">
 <link rel="modulepreload" href="./_npm/htl@0.3.1/_esm.js">
@@ -188,13 +187,12 @@ const xlsxfileInput = view(Inputs.file({label: "­□ Import XLSX", accept: ".xl
 return {xlsxfileInput};
 }});
 
-define({id: "6b3a8cb1", inputs: ["view","html","formationSelectionInput","landUtils","selectedSection","tableSelection","Plot","leases"], body: (view,html,formationSelectionInput,landUtils,selectedSection,tableSelection,Plot,leases) => {
-view(html`${formationSelectionInput}<div class="card">
-<div style="display:flex;flex-direction:row;justify-content:space-around">All ${landUtils.idToSection(selectedSection, true)} Leases
-<h2 style="margin-top: 1vh">Leases Expiring (6 Months)</h2></div>
+define({id: "5fc97d6a", inputs: ["view","html","formationSelectionInput","width","landUtils","selectedSection","tableSelection","Plot","leases"], body: (view,html,formationSelectionInput,width,landUtils,selectedSection,tableSelection,Plot,leases) => {
+view(html`${formationSelectionInput}
+<div class="grid grid-cols-2"  style="grid-auto-rows: auto;"><div class="card grid-rowspan-1" style="text-align:center;max-width:${width -30}px">All ${landUtils.idToSection(selectedSection, true)}${tableSelection}</div><div class="card grid-rowspan-1" >
+<h2 style="text-align:center">Leases Expiring (6 Months)</h2>
 
- <div class="grid grid-cols-2">
- ${tableSelection}<div> ${Plot.dot(leases.rawTable.filter(l => 
+  ${Plot.dot(leases.rawTable.filter(l => 
     l.EXPDATE && l.EXPDATE.getTime() < (Date.now() + (2629743.83 * 6000 )) && l.EXPDATE.getTime() > Date.now() && (l.TSTATUS === "TERM" || l.TSTATUS === "LEASED")), {
   x: "EXPDATE",
   y: "NMA",
@@ -214,8 +212,8 @@ let centers = await z.file('sectionCenters.json').json()
 return {z,centers};
 }});
 
-define({id: "cae54512", inputs: ["xlsxfileInput","Mutable","map","Inputs","Generators"], outputs: ["Excel","landUtils","workbook","leases","selectedSection","updateSelectedSection","formationSelectionInput","formation"], body: async (xlsxfileInput,Mutable,map,Inputs,Generators) => {
-const [{default: Excel}, landUtils] = await Promise.all([import("./_npm/exceljs@4.4.0/_esm.js"), import("./_import/components/duncanLandParser.8960d0ef.js")]);
+define({id: "431e080d", inputs: ["xlsxfileInput","Mutable","map","Inputs","Generators"], outputs: ["landUtils","workbook","leases","selectedSection","updateSelectedSection","formationSelectionInput","formation"], body: async (xlsxfileInput,Mutable,map,Inputs,Generators) => {
+const landUtils = await import("./_import/components/duncanLandParser.8960d0ef.js");
 const workbook = await xlsxfileInput.xlsx()
 const leases = landUtils.lst(workbook)
 let selectedSection = Mutable(landUtils.sectionToId(leases.rawTable[0].STR))
@@ -238,7 +236,7 @@ const formationSelectionInput =
     value: leases.formations.find((t) => t.name === "Cleveland Sd")
   })
 const formation = Generators.input(formationSelectionInput)
-return {Excel,landUtils,workbook,leases,selectedSection,updateSelectedSection,formationSelectionInput,formation};
+return {landUtils,workbook,leases,selectedSection,updateSelectedSection,formationSelectionInput,formation};
 }});
 
 define({id: "3b07aa07", inputs: ["Inputs","leases","landUtils","selectedSection","Generators"], outputs: ["tableSelection","table"], body: (Inputs,leases,landUtils,selectedSection,Generators) => {
@@ -374,13 +372,13 @@ form:first-of-type > label{
 <div id="cell-e42605fd" class="observablehq observablehq--block"></div>
 <div id="cell-fe36032a" class="observablehq observablehq--block"></div>
 <div id="cell-6df595eb" class="observablehq observablehq--block"></div>
-<div id="cell-6b3a8cb1" class="observablehq observablehq--block observablehq--loading"></div>
+<div id="cell-5fc97d6a" class="observablehq observablehq--block observablehq--loading"></div>
 <div id="cell-4cd6b270" class="observablehq observablehq--block"></div>
-<div id="cell-cae54512" class="observablehq observablehq--block"></div>
+<div id="cell-431e080d" class="observablehq observablehq--block"></div>
 <div id="cell-3b07aa07" class="observablehq observablehq--block"></div>
 <div id="cell-8a676e51" class="observablehq observablehq--block"></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2024-04-08T08:50:35">Apr 8, 2024</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2024-04-08T10:54:11">Apr 8, 2024</a>.</div>
 </footer>
 </div>
