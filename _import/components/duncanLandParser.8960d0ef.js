@@ -43,38 +43,7 @@ export function lst(workbook) {
         })
         resultRow.NMA = parseFloat(row['NETACRES'])
         result.rawTable.push(resultRow)
-        /*
-                let id = `${row['LSEAGMT']}${row['TRACTID']}${row['TLEGAL']}${row['DEPTIVL']}`
-                if (ids[id] !== undefined) { console.log(`Duplicate Row ${id}`); return }
-                ids[id] = 1
-        
-                let leaseID = row['LSEAGMT']
-                data[leaseID] = data[leaseID] || { tracts: [], NMA: 0, depths: [], STR: `${row['SECTION']}-${row["TWNSHIP"]}${row["RANGE"]}` }
-                
-                let legal = `${row['TLEGAL']}(${row['NETACRES']})`
-                if (data[leaseID].tracts.indexOf(legal) < 0) {
-                    data[leaseID].tracts.push(legal)
-                    data[leaseID].NMA += parseFloat(row['NETACRES'])
-                }
-                let depth = row['DEPTIVL']
-        
-                if (data[leaseID].depths.indexOf(depth) < 0) data[leaseID].depths.push(depth)
-                data[leaseID].row = row
-        
-            })
-        
-            Object.keys(data).forEach(lease => {
-                let current = data[lease]
-                let cLease = {}
-                WDTable.forEach(header => {
-                    cLease[header] = current.row[header]
-                })
-                cLease.STR = current.STR,
-                    cLease['DEPTIVL'] = current.depths.join(' | '),
-                    cLease['TLEGAL'] = current.tracts.join(' | '),
-                    cLease['NMA'] = current.NMA
-                result.push(cLease)
-                */
+
     })
 
     if (workbook.sheetNames[2] !== undefined) workbook.sheet(workbook.sheetNames[2], { headers: true }).forEach((v, i) => {
