@@ -3,11 +3,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>MappingDashboard</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=swap" crossorigin>
+<link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=swap"
+    crossorigin>
 <link rel="preload" as="style" href="./_observablehq/theme-near-midnight.css">
 <link rel="preload" as="style" href="./_observablehq/stdlib/inputs.css">
 <link rel="preload" as="style" href="./_npm/mapbox-gl@3.2.0/dist/mapbox-gl.css">
-<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css"
+    href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=swap"
+    crossorigin>
 <link rel="stylesheet" type="text/css" href="./_observablehq/theme-near-midnight.css">
 <link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.css">
 <link rel="stylesheet" type="text/css" href="./_npm/mapbox-gl@3.2.0/dist/mapbox-gl.css">
@@ -60,325 +64,354 @@
 <link rel="modulepreload" href="./_npm/robust-predicates@3.0.2/_esm.js">
 <script type="module">
 
-import {define} from "./_observablehq/client.js";
-import {registerFile} from "./_observablehq/stdlib.js";
+    import { define } from "./_observablehq/client.js";
+    import { registerFile } from "./_observablehq/stdlib.js";
 
-registerFile("./data/sectionCenters.json.zip", {"name":"./data/sectionCenters.json.zip","mimeType":"application/zip","path":"./_file/data/sectionCenters.json.f987e0d7.zip","lastModified":1712247861226});
+    registerFile("./data/sectionCenters.json.zip", { "name": "./data/sectionCenters.json.zip", "mimeType": "application/zip", "path": "./_file/data/sectionCenters.json.f987e0d7.zip", "lastModified": 1712247861226 });
 
-define({id: "e42605fd", outputs: ["selectedSectionsPrev"], body: () => {
-//Texas RR shapefiles https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/
+    define({
+        id: "e42605fd", outputs: ["selectedSectionsPrev"], body: () => {
+            //Texas RR shapefiles https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/
 
-const selectedSectionsPrev = {}
-return {selectedSectionsPrev};
-}});
-
-define({id: "fe36032a", inputs: ["display"], outputs: ["mapboxgl","mapDiv","sliderDiv","map"], body: async (display) => {
-const {default: mapboxgl} = await import("./_npm/mapbox-gl@3.2.0/_esm.js");
-mapboxgl.accessToken = 'pk.eyJ1IjoiYmxhY2tib3hlbmVyZ3kiLCJhIjoiY2owcGcxZjc5MDB0ZTJ3bndmc3F0bHIxYSJ9.-yellpnNUyGr6fvhwAwcnw';
-const mapDiv = display(document.createElement("div"))
-mapDiv.style = "height: 40vh;"
-const sliderDiv = display(document.createElement("div"))
-const map = await new mapboxgl.Map(
-    {
-        container: mapDiv,
-        style: 'mapbox://styles/blackboxenergy/clukcdov3042t01qq22vmbpr4',
-        center: [-98.83724479893226, 35.79563436892933],
-        zoom: 6
-
+            const selectedSectionsPrev = {}
+            return { selectedSectionsPrev };
+        }
     });
 
-map.on('load', () => {
-    map.addSource('okSectionInfo', {
-        type: 'geojson',
-        data: {
-            type: "FeatureCollection",
-            features: []
+    define({
+        id: "fe36032a", inputs: ["display"], outputs: ["mapboxgl", "mapDiv", "sliderDiv", "map"], body: async (display) => {
+            const { default: mapboxgl } = await import("./_npm/mapbox-gl@3.2.0/_esm.js");
+            mapboxgl.accessToken = 'pk.eyJ1IjoiYmxhY2tib3hlbmVyZ3kiLCJhIjoiY2owcGcxZjc5MDB0ZTJ3bndmc3F0bHIxYSJ9.-yellpnNUyGr6fvhwAwcnw';
+            const mapDiv = display(document.createElement("div"))
+            mapDiv.style = "height: 40vh;"
+            const sliderDiv = display(document.createElement("div"))
+            const map = await new mapboxgl.Map(
+                {
+                    container: mapDiv,
+                    style: 'mapbox://styles/blackboxenergy/clukcdov3042t01qq22vmbpr4',
+                    center: [-98.83724479893226, 35.79563436892933],
+                    zoom: 6
+
+                });
+
+            map.on('load', () => {
+                map.addSource('okSectionInfo', {
+                    type: 'geojson',
+                    data: {
+                        type: "FeatureCollection",
+                        features: []
+                    }
+                })
+                map.addLayer(
+                    {
+                        "id": "OKsectionNMA",
+                        "minzoom": 9,
+                        "type": "symbol",
+                        "paint": {
+                            "text-color": "hsl(0, 0%, 0%)",
+                            "text-halo-color": "hsla(0, 0%, 100%, 0.6)",
+                            "text-halo-width": [
+                                "interpolate",
+                                [
+                                    "linear"
+                                ],
+                                [
+                                    "zoom"
+                                ],
+                                0,
+                                1,
+                                22,
+                                1
+                            ]
+                        },
+                        "layout": {
+                            "text-field": ["format", ['to-string', ["get", "s"]], {},
+                                "\n", {}, "UNRI: ", {}, ["to-string", ["get", "UNRI"]], {}, '\n', {}, 'NMA: ', {}, ["to-string",
+                                    [
+                                        "get",
+                                        "NMA"
+                                    ]], {}
+
+                            ],
+                            "text-size": [
+                                "interpolate",
+                                [
+                                    "linear"
+                                ],
+                                [
+                                    "zoom"
+                                ],
+                                0,
+                                16,
+                                10,
+                                6,
+                                16,
+                                25
+                            ],
+                            "text-font": [
+                                "Roboto Regular",
+                                "Arial Unicode MS Regular"
+                            ]
+                        },
+                        "source": "okSectionInfo"
+
+                    }
+                )
+                map.addLayer({
+                    'id': 'okSectionSelector', // the layer id
+                    'type': 'fill', // the type of layer
+                    'source': 'composite',
+                    'source-layer': 'OWRBSections', // the source for the layer (we set it up above)
+                    'paint': {
+                        'fill-color': "#e5e500",
+                        'fill-opacity': 0.0
+                    }
+                }, "okCountyLabels");
+                map.addLayer({
+                    'id': 'okSectionsWithAcreages', // the layer id
+                    'type': 'fill', // the type of layer
+                    'source': 'composite',
+                    'source-layer': 'OWRBSections', // the source for the layer (we set it up above)
+                    'paint': {
+
+                        'fill-color': "#e6cd5e",
+
+                        'fill-opacity': [
+                            'case', ['boolean', ['feature-state', 'leasehold'], false],
+                            .6,
+                            0.0
+                        ]
+                    }
+                }, "okCountyLabels");
+
+            })
+
+            return { mapboxgl, mapDiv, sliderDiv, map };
         }
-    })
-    map.addLayer(
-        {
-            "id": "OKsectionNMA",
-            "minzoom": 9,
-            "type": "symbol",
-            "paint": {
-                "text-color": "hsl(0, 0%, 0%)",
-                "text-halo-color": "hsla(0, 0%, 100%, 0.6)",
-                "text-halo-width": [
-                    "interpolate",
-                    [
-                        "linear"
-                    ],
-                    [
-                        "zoom"
-                    ],
-                    0,
-                    1,
-                    22,
-                    1
-                ]
-            },
-            "layout": {
-                "text-field": ["format",['to-string',["get","s"]],{},
-                "\n",{},"UNRI: ",{},["to-string",["get", "UNRI"]], {}, '\n', {}, 'NMA: ', {}, ["to-string",
-                        [
-                            "get",
-                            "NMA"
-                        ]], {}
+    });
 
-                ],
-                "text-size": [
-                    "interpolate",
-                    [
-                        "linear"
-                    ],
-                    [
-                        "zoom"
-                    ],
-                    0,
-                    16,
-                    10,
-                    5,
-                    16,
-                    16
-                ],
-                "text-font": [
-                    "Roboto Regular",
-                    "Arial Unicode MS Regular"
-                ]
-            },
-            "source": "okSectionInfo"
-
+    define({
+        id: "6df595eb", inputs: ["view", "Inputs"], outputs: ["xlsxfileInput"], body: (view, Inputs) => {
+            const xlsxfileInput = view(Inputs.file({ label: "­□ Import XLSX", accept: ".xlsx", required: true }))
+            return { xlsxfileInput };
         }
-    )
-    map.addLayer({
-        'id': 'okSectionSelector', // the layer id
-        'type': 'fill', // the type of layer
-        'source': 'composite',
-        'source-layer': 'OWRBSections', // the source for the layer (we set it up above)
-        'paint': {
-            'fill-color': "#e5e500",
-            'fill-opacity': 0.0
-        }
-    }, "okCountyLabels");
-    map.addLayer({
-        'id': 'okSectionsWithAcreages', // the layer id
-        'type': 'fill', // the type of layer
-        'source': 'composite',
-        'source-layer': 'OWRBSections', // the source for the layer (we set it up above)
-        'paint': {
+    });
 
-            'fill-color': "#e6cd5e",
-
-            'fill-opacity': [
-                'case', ['boolean', ['feature-state', 'leasehold'], false],
-                .6,
-                0.0
-            ]
-        }
-    }, "okCountyLabels");
-
-})
- 
-return {mapboxgl,mapDiv,sliderDiv,map};
-}});
-
-define({id: "6df595eb", inputs: ["view","Inputs"], outputs: ["xlsxfileInput"], body: (view,Inputs) => {
-const xlsxfileInput = view(Inputs.file({label: "­□ Import XLSX", accept: ".xlsx", required: true}))
-return {xlsxfileInput};
-}});
-
-define({id: "5fc97d6a", inputs: ["view","html","formationSelectionInput","width","landUtils","selectedSection","tableSelection","Plot","leases"], body: (view,html,formationSelectionInput,width,landUtils,selectedSection,tableSelection,Plot,leases) => {
-view(html`${formationSelectionInput}
-<div class="grid grid-cols-2"  style="grid-auto-rows: auto;"><div class="card grid-rowspan-1" style="text-align:center;max-width:${width -30}px">All ${landUtils.idToSection(selectedSection, true)}${tableSelection}</div><div class="card grid-rowspan-1" >
+    define({
+        id: "5fc97d6a", inputs: ["view", "html", "formationSelectionInput", "width", "landUtils", "selectedSection", "tableSelection", "Plot", "leases"], body: (view, html, formationSelectionInput, width, landUtils, selectedSection, tableSelection, Plot, leases) => {
+            view(html`${formationSelectionInput}
+<div class="grid grid-cols-2"  style="grid-auto-rows: auto;"><div class="card grid-rowspan-1" style="text-align:center;max-width:${width - 30}px">All ${landUtils.idToSection(selectedSection, true)}${tableSelection}</div><div class="card grid-rowspan-1" >
 <h2 style="text-align:center">Leases Expiring (6 Months)</h2>
 
-  ${Plot.dot(leases.rawTable.filter(l => 
-    l.EXPDATE && l.EXPDATE.getTime() < (Date.now() + (2629743.83 * 6000 )) && l.EXPDATE.getTime() > Date.now() && (l.TSTATUS === "TERM" || l.TSTATUS === "LEASED")), {
-  x: "EXPDATE",
-  y: "NMA",
-  stroke: "STR",
-  channels: {name: "LSENAME", prospect:"PRSPNAME"},
-  tip: true
-}).plot()}
+  ${Plot.dot(leases.rawTable.filter(l =>
+                l.EXPDATE && l.EXPDATE.getTime() < (Date.now() + (2629743.83 * 6000)) && l.EXPDATE.getTime() > Date.now() && (l.TSTATUS === "TERM" || l.TSTATUS === "LEASED")), {
+                x: "EXPDATE",
+                y: "NMA",
+                stroke: "STR",
+                channels: { name: "LSENAME", prospect: "PRSPNAME" },
+                tip: true
+            }).plot()}
 </div></div>`)
 
-}});
-
-define({id: "4cd6b270", inputs: ["FileAttachment"], outputs: ["z","centers"], body: async (FileAttachment) => {
-let z = await FileAttachment("./data/sectionCenters.json.zip").zip()
-let centers = await z.file('sectionCenters.json').json()
-
-
-return {z,centers};
-}});
-
-define({id: "431e080d", inputs: ["xlsxfileInput","Mutable","map","Inputs","Generators"], outputs: ["landUtils","workbook","leases","selectedSection","updateSelectedSection","formationSelectionInput","formation"], body: async (xlsxfileInput,Mutable,map,Inputs,Generators) => {
-const landUtils = await import("./_import/components/duncanLandParser.8960d0ef.js");
-const workbook = await xlsxfileInput.xlsx()
-const leases = landUtils.lst(workbook)
-let selectedSection = Mutable(landUtils.sectionToId(leases.rawTable[0].STR))
-map.setFilter('CurrentlySelectedSection',["all",["match",["id"],[selectedSection.value],true,false]])
-const updateSelectedSection = (id) => {
-   if(leases.sectionGross[id] !== undefined) selectedSection.value = id
-   console.log(id, 'updatedSelectedSection')
-}
-map.on('click', 'okSectionSelector', (e) => {
-    let id = e.features[0].id
-        updateSelectedSection(id)
-        console.log('map click', id, selectedSection.value)
-       map.setFilter('CurrentlySelectedSection',["all",["match",["id"],[id],true,false]])
-    
-})
-const formationSelectionInput = 
-  Inputs.select(leases.formations, {
-    label: "Map Formation",
-    format: (t) => t.name,
-    value: leases.formations.find((t) => t.name === "Cleveland Sd")
-  })
-const formation = Generators.input(formationSelectionInput)
-return {landUtils,workbook,leases,selectedSection,updateSelectedSection,formationSelectionInput,formation};
-}});
-
-define({id: "3b07aa07", inputs: ["Inputs","leases","landUtils","selectedSection","Generators"], outputs: ["tableSelection","table"], body: (Inputs,leases,landUtils,selectedSection,Generators) => {
-const tableSelection = Inputs.table(leases.rawTable.filter((lease) => {
-   
-    return landUtils.sectionToId(lease["STR"]) === selectedSection
-}
-    ),{ rows:14 }
-)
-const table = Generators.input(tableSelection)
-return {tableSelection,table};
-}});
-
-define({id: "8a676e51", inputs: ["formation","leases","landUtils","selectedSectionsPrev","map","centers"], body: (formation,leases,landUtils,selectedSectionsPrev,map,centers) => {
-if (formation) {
-    let table = leases.rawTable.filter(lease => {
-    return formation.depthIntervals.indexOf(lease["DEPTIVL"]) > -1})
-    let selectedSections = {}
-    table.forEach(lease => {
-        let sectionId = landUtils.sectionToId(lease.STR)
-        selectedSections[sectionId] = selectedSections[sectionId] || {NMA:0, UNRI:0}
-        selectedSections[sectionId].UNRI += (lease['NRI'] * lease["NMA"]) / leases.sectionGross[sectionId]
-        selectedSections[sectionId].NMA += lease["NMA"]
-     
-    })
-    Object.keys(selectedSectionsPrev).forEach(sectionId => {
-        
-        if (selectedSections[sectionId] === undefined) {
-            map.setFeatureState({ id: sectionId, source: 'composite', sourceLayer: 'OWRBSections' }, { leasehold: false })
-            delete selectedSectionsPrev[sectionId]
         }
-    })
+    });
 
-    let labelGeojson = {
-        type: "FeatureCollection",
-        features: []
-    }
-    Object.keys(selectedSections).forEach(sectionId => {
-        let NMA = parseFloat(selectedSections[sectionId].NMA.toFixed(3))
-        let UNRI =  parseFloat(selectedSections[sectionId].UNRI.toFixed(4))
-        labelGeojson.features.push({
-            "type": "Feature",
-            "properties": { s: landUtils.idToSection(sectionId, true), NMA: NMA , UNRI: UNRI},
-            "geometry": {
-                "coordinates": centers[sectionId],
-                "type": "Point"
+    define({
+        id: "4cd6b270", inputs: ["FileAttachment"], outputs: ["z", "centers"], body: async (FileAttachment) => {
+            let z = await FileAttachment("./data/sectionCenters.json.zip").zip()
+            let centers = await z.file('sectionCenters.json').json()
+
+
+            return { z, centers };
+        }
+    });
+
+    define({
+        id: "431e080d", inputs: ["xlsxfileInput", "Mutable", "map", "Inputs", "Generators"], outputs: ["landUtils", "workbook", "leases", "selectedSection", "updateSelectedSection", "formationSelectionInput", "formation"], body: async (xlsxfileInput, Mutable, map, Inputs, Generators) => {
+            const landUtils = await import("./_import/components/duncanLandParser.8960d0ef.js");
+            const workbook = await xlsxfileInput.xlsx()
+            const leases = landUtils.lst(workbook)
+            let selectedSection = Mutable(landUtils.sectionToId(leases.rawTable[0].STR))
+            map.setFilter('CurrentlySelectedSection', ["all", ["match", ["id"], [selectedSection.value], true, false]])
+            const updateSelectedSection = (id) => {
+                if (leases.sectionGross[id] !== undefined) selectedSection.value = id
+                console.log(id, 'updatedSelectedSection')
             }
-        })
-        selectedSectionsPrev[sectionId] = selectedSections[sectionId]
-        map.setFeatureState({ id: sectionId, source: 'composite', sourceLayer: 'OWRBSections' }, { leasehold: true })
-    })
+            map.on('click', 'okSectionSelector', (e) => {
+                let id = e.features[0].id
+                updateSelectedSection(id)
+                console.log('map click', id, selectedSection.value)
+                map.setFilter('CurrentlySelectedSection', ["all", ["match", ["id"], [id], true, false]])
 
-    map.getSource("okSectionInfo").setData(labelGeojson)
+            })
+            const formationSelectionInput =
+                Inputs.select(leases.formations, {
+                    label: "Map Formation",
+                    format: (t) => t.name,
+                    value: leases.formations.find((t) => t.name === "Cleveland Sd")
+                })
+            const formation = Generators.input(formationSelectionInput)
+            return { landUtils, workbook, leases, selectedSection, updateSelectedSection, formationSelectionInput, formation };
+        }
+    });
 
-}
+    define({
+        id: "3b07aa07", inputs: ["Inputs", "leases", "landUtils", "selectedSection", "Generators"], outputs: ["tableSelection", "table"], body: (Inputs, leases, landUtils, selectedSection, Generators) => {
+            const tableSelection = Inputs.table(leases.rawTable.filter((lease) => {
 
-}});
+                return landUtils.sectionToId(lease["STR"]) === selectedSection
+            }
+            ), { rows: 14 }
+            )
+            const table = Generators.input(tableSelection)
+            return { tableSelection, table };
+        }
+    });
+
+    define({
+        id: "8a676e51", inputs: ["formation", "leases", "landUtils", "selectedSectionsPrev", "map", "centers"], body: (formation, leases, landUtils, selectedSectionsPrev, map, centers) => {
+            if (formation) {
+                let table = leases.rawTable.filter(lease => {
+                    return formation.depthIntervals.indexOf(lease["DEPTIVL"]) > -1
+                })
+                let selectedSections = {}
+                table.forEach(lease => {
+                    let sectionId = landUtils.sectionToId(lease.STR)
+                    selectedSections[sectionId] = selectedSections[sectionId] || { NMA: 0, UNRI: 0 }
+                    selectedSections[sectionId].UNRI += (lease['NRI'] * lease["NMA"]) / leases.sectionGross[sectionId]
+                    selectedSections[sectionId].NMA += lease["NMA"]
+
+                })
+                Object.keys(selectedSectionsPrev).forEach(sectionId => {
+
+                    if (selectedSections[sectionId] === undefined) {
+                        map.setFeatureState({ id: sectionId, source: 'composite', sourceLayer: 'OWRBSections' }, { leasehold: false })
+                        delete selectedSectionsPrev[sectionId]
+                    }
+                })
+
+                let labelGeojson = {
+                    type: "FeatureCollection",
+                    features: []
+                }
+                Object.keys(selectedSections).forEach(sectionId => {
+                    let NMA = parseFloat(selectedSections[sectionId].NMA.toFixed(3))
+                    let UNRI = parseFloat(selectedSections[sectionId].UNRI.toFixed(4))
+                    labelGeojson.features.push({
+                        "type": "Feature",
+                        "properties": { s: landUtils.idToSection(sectionId, true), NMA: NMA, UNRI: UNRI },
+                        "geometry": {
+                            "coordinates": centers[sectionId],
+                            "type": "Point"
+                        }
+                    })
+                    selectedSectionsPrev[sectionId] = selectedSections[sectionId]
+                    map.setFeatureState({ id: sectionId, source: 'composite', sourceLayer: 'OWRBSections' }, { leasehold: true })
+                })
+
+                map.getSource("okSectionInfo").setData(labelGeojson)
+
+            }
+
+        }
+    });
 
 </script>
 <div id="observablehq-center">
-<main id="observablehq-main" class="observablehq">
+    <main id="observablehq-main" class="observablehq">
 
-<link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&amp;display=swap" rel="stylesheet">
+        <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&amp;display=swap"
+            rel="stylesheet">
 
-<style>
-  form > label{
-    cursor:url('data:image/svg+xml;charset=utf-8,<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg"><circle stroke="null" fill="%2300acc1" fill-opacity=".5" r="10" cy="25" cx="25" stroke-miterlimit="10" stroke-width="2"/></svg>') 25 25,default !important;
-  }
-body {
-  cursor:url('data:image/svg+xml;charset=utf-8,<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg"><circle stroke="null" fill="white" fill-opacity=".5" r="10" cy="25" cx="25" stroke-miterlimit="10" stroke-width="2"/></svg>') 25 25,default !important;
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 200;
-  font-style: normal;
-}
-canvas {
-  cursor:url('data:image/svg+xml;charset=utf-8,<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg"><circle stroke="black" fill="none" stroke-opacity=".5" r="10" cy="25" cx="25" stroke-miterlimit="10" stroke-width="1"/><circle stroke="null" fill="black" fill-opacity=".5" r="1" cy="25" cx="25" stroke-miterlimit="10" stroke-width="1"/></svg>') 25 25,default !important;
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 200;
-  font-style: normal;
-}
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: var(--sans-serif);
-  margin: 1rem 0 2rem;
-  text-wrap: balance;
-  text-align: center;
-}
-.hero h1 {
-  margin: 1rem 0;
-  max-width: none;
-  font-size: 3vw;
-  font-weight: 700;
-  line-height: 1;
-  background: linear-gradient(30deg, var(--theme-foreground-focus), currentColor);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-form:first-of-type > div {  
-  display: none;
-}
-form:first-of-type > label{
-  background-color:black;
-  text-align: center;
-  border-radius:3px;
-  outline: 1px solid rgba(255,255,255, .3)
-}
-.mapboxgl-control-container {
-        display: none;
-    }
-.hero h2 {
-  margin: 0;
-  max-width: 34em;
-  font-size: 20px;
-  font-style: initial;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--theme-foreground-muted);
-}
-@media (min-width: 640px) {
-  .hero h1 {
-    font-size: 30px;
-  }
-}
-</style>
-<div id="cell-e42605fd" class="observablehq observablehq--block"></div>
-<div id="cell-fe36032a" class="observablehq observablehq--block"></div>
-<div id="cell-6df595eb" class="observablehq observablehq--block"></div>
-<div id="cell-5fc97d6a" class="observablehq observablehq--block observablehq--loading"></div>
-<div id="cell-4cd6b270" class="observablehq observablehq--block"></div>
-<div id="cell-431e080d" class="observablehq observablehq--block"></div>
-<div id="cell-3b07aa07" class="observablehq observablehq--block"></div>
-<div id="cell-8a676e51" class="observablehq observablehq--block"></div>
-</main>
-<footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2024-04-08T10:54:11">Apr 8, 2024</a>.</div>
-</footer>
+        <style>
+            form>label {
+                cursor: url('data:image/svg+xml;charset=utf-8,<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg"><circle stroke="null" fill="%2300acc1" fill-opacity=".5" r="10" cy="25" cx="25" stroke-miterlimit="10" stroke-width="2"/></svg>') 25 25, default !important;
+            }
+
+            body {
+                cursor: url('data:image/svg+xml;charset=utf-8,<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg"><circle stroke="null" fill="white" fill-opacity=".5" r="10" cy="25" cx="25" stroke-miterlimit="10" stroke-width="2"/></svg>') 25 25, default !important;
+                font-family: "Montserrat", sans-serif;
+                font-optical-sizing: auto;
+                font-weight: 200;
+                font-style: normal;
+            }
+
+            canvas {
+                cursor: url('data:image/svg+xml;charset=utf-8,<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg"><circle stroke="black" fill="none" stroke-opacity=".5" r="10" cy="25" cx="25" stroke-miterlimit="10" stroke-width="1"/><circle stroke="null" fill="black" fill-opacity=".5" r="1" cy="25" cx="25" stroke-miterlimit="10" stroke-width="1"/></svg>') 25 25, default !important;
+                font-family: "Montserrat", sans-serif;
+                font-optical-sizing: auto;
+                font-weight: 200;
+                font-style: normal;
+            }
+
+            .hero {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-family: var(--sans-serif);
+                margin: 1rem 0 2rem;
+                text-wrap: balance;
+                text-align: center;
+            }
+
+            .hero h1 {
+                margin: 1rem 0;
+                max-width: none;
+                font-size: 3vw;
+                font-weight: 700;
+                line-height: 1;
+                background: linear-gradient(30deg, var(--theme-foreground-focus), currentColor);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            form:first-of-type>div {
+                display: none;
+            }
+
+            form:first-of-type>label {
+                background-color: black;
+                text-align: center;
+                border-radius: 3px;
+                outline: 1px solid rgba(255, 255, 255, .3)
+            }
+
+            .mapboxgl-control-container {
+                display: none;
+            }
+
+            .hero h2 {
+                margin: 0;
+                max-width: 34em;
+                font-size: 20px;
+                font-style: initial;
+                font-weight: 500;
+                line-height: 1.5;
+                color: var(--theme-foreground-muted);
+            }
+
+            @media (min-width: 640px) {
+                .hero h1 {
+                    font-size: 30px;
+                }
+            }
+        </style>
+        <div id="cell-e42605fd" class="observablehq observablehq--block"></div>
+        <div id="cell-fe36032a" class="observablehq observablehq--block"></div>
+        <div id="cell-6df595eb" class="observablehq observablehq--block"></div>
+        <div id="cell-5fc97d6a" class="observablehq observablehq--block observablehq--loading"></div>
+        <div id="cell-4cd6b270" class="observablehq observablehq--block"></div>
+        <div id="cell-431e080d" class="observablehq observablehq--block"></div>
+        <div id="cell-3b07aa07" class="observablehq observablehq--block"></div>
+        <div id="cell-8a676e51" class="observablehq observablehq--block"></div>
+    </main>
+    <footer id="observablehq-footer">
+        <div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on
+            <a title="2024-04-08T10:54:11">Apr 8, 2024</a>.
+        </div>
+    </footer>
 </div>
