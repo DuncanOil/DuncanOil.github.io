@@ -83,7 +83,7 @@
             const { default: mapboxgl } = await import("./_npm/mapbox-gl@3.2.0/_esm.js");
             mapboxgl.accessToken = 'pk.eyJ1IjoiYmxhY2tib3hlbmVyZ3kiLCJhIjoiY2owcGcxZjc5MDB0ZTJ3bndmc3F0bHIxYSJ9.-yellpnNUyGr6fvhwAwcnw';
             const mapDiv = display(document.createElement("div"))
-            mapDiv.style = "height: 40vh;"
+            mapDiv.style = "height: 60vh;"
             const sliderDiv = display(document.createElement("div"))
             const map = await new mapboxgl.Map(
                 {
@@ -126,7 +126,7 @@
                         },
                         "layout": {
                             "text-field": ["format", ['to-string', ["get", "s"]], {},
-                                "\n", {}, "UNRI: ", {}, ["to-string", ["get", "UNRI"]], {}, '\n', {}, 'NMA: ', {}, ["to-string",
+                                "\n", {}, "ANRI: ", {}, ["to-string", ["get", "AWNRI"]], {}, '\n', {}, 'NMA: ', {}, ["to-string",
                                     [
                                         "get",
                                         "NMA"
@@ -144,7 +144,7 @@
                                 0,
                                 16,
                                 10,
-                                6,
+                                5,
                                 16,
                                 25
                             ],
@@ -200,7 +200,7 @@
     define({
         id: "5fc97d6a", inputs: ["view", "html", "formationSelectionInput", "width", "landUtils", "selectedSection", "tableSelection", "Plot", "leases"], body: (view, html, formationSelectionInput, width, landUtils, selectedSection, tableSelection, Plot, leases) => {
             view(html`${formationSelectionInput}
-<div class="grid grid-cols-2"  style="grid-auto-rows: auto;"><div class="card grid-rowspan-1" style="text-align:center;max-width:${width - 30}px">All ${landUtils.idToSection(selectedSection, true)}${tableSelection}</div><div class="card grid-rowspan-1" >
+<div class="grid grid-cols-2"  style="grid-auto-rows: auto;"><div class="card grid-rowspan-1" style="text-align:center;max-width:${width - 30}px">All ${landUtils.idToSection(selectedSection, true)} Leases${tableSelection}</div><div class="card grid-rowspan-1" >
 <h2 style="text-align:center">Leases Expiring (6 Months)</h2>
 
   ${Plot.dot(leases.rawTable.filter(l =>
@@ -208,7 +208,7 @@
                 x: "EXPDATE",
                 y: "NMA",
                 stroke: "STR",
-                channels: { name: "LSENAME", prospect: "PRSPNAME" },
+                channels: { name: "LSENAME", "-": "PRSPNAME" },
                 tip: true
             }).plot()}
 </div></div>`)
@@ -277,8 +277,8 @@
                 let selectedSections = {}
                 table.forEach(lease => {
                     let sectionId = landUtils.sectionToId(lease.STR)
-                    selectedSections[sectionId] = selectedSections[sectionId] || { NMA: 0, UNRI: 0 }
-                    selectedSections[sectionId].UNRI += (lease['NRI'] * lease["NMA"]) / leases.sectionGross[sectionId]
+                    selectedSections[sectionId] = selectedSections[sectionId] || { NMA: 0, AWNRI: 0 }
+                    selectedSections[sectionId].AWNRI += (lease['NRI'] * lease["NMA"])
                     selectedSections[sectionId].NMA += lease["NMA"]
 
                 })
@@ -295,11 +295,12 @@
                     features: []
                 }
                 Object.keys(selectedSections).forEach(sectionId => {
+                    let AWNRI = parseFloat((selectedSections[sectionId].AWNRI / selectedSections[sectionId].NMA).toFixed(4))
                     let NMA = parseFloat(selectedSections[sectionId].NMA.toFixed(3))
-                    let UNRI = parseFloat(selectedSections[sectionId].UNRI.toFixed(4))
+
                     labelGeojson.features.push({
                         "type": "Feature",
-                        "properties": { s: landUtils.idToSection(sectionId, true), NMA: NMA, UNRI: UNRI },
+                        "properties": { s: landUtils.idToSection(sectionId, true), NMA: NMA, AWNRI: AWNRI },
                         "geometry": {
                             "coordinates": centers[sectionId],
                             "type": "Point"
